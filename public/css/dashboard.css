@@ -1,0 +1,53 @@
+/* public/css/dashboard.css */
+.dashboard-container .stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-container .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.dashboard-container .chart-container {
+    height: 300px;
+}
+
+.dashboard-container .table-container {
+    margin-top: 1.5rem;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dashboard-container th,
+.dashboard-container td {
+    border: 1px solid #e2e8f0;
+    padding: 0.5rem;
+}
+
+.dashboard-container thead tr {
+    background-color: #f8fafc;
+}
+
+.dashboard-container .btn-view {
+    background-color: #54acc4;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    border: none;
+    cursor: pointer;
+}
+
+.dashboard-container .solde-warning {
+    color: #e66840;
+}
