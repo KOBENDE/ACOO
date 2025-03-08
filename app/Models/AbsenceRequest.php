@@ -15,9 +15,11 @@ class AbsenceRequest extends Model
         'duree',
         'motif',
         'type',
-        'statut',
+        'statut'
     ];
 
+    protected $dates = ['date_debut', 'date_fin'];
+    
     protected $casts = [
         'date_debut' => 'date',
         'date_fin' => 'date',

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription | GCA</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="{{ asset('assets/img/favicon.png') }}" rel="icon">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -89,7 +90,7 @@
         @endif
 
         <!-- Formulaire -->
-        <form action="#" method="POST" class="space-y-6">
+        <form action="{{ route('register.submit') }}" method="POST" class="space-y-6">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -139,11 +140,11 @@
                         <select name="service_id" required
                             class="w-full input-with-icon py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#54acc4] focus:border-transparent transition-all duration-200 appearance-none bg-white">
                             <option value="">Sélectionner un service</option>
-                            {{-- @foreach($services as $service)
+                            @foreach($services as $service)
                                 <option value="{{ $service->id }}" {{ old('service_id') == $service->id ? 'selected' : '' }}>
                                     {{ $service->nom }}
                                 </option>
-                            @endforeach --}}
+                            @endforeach
                         </select>
                     </div>
                 </div>

@@ -18,7 +18,9 @@ class VacationRequest extends Model
         'type',
         'statut'
     ];
-
+    
+    protected $dates = ['date_debut', 'date_fin'];
+    
     protected $casts = [
         'date_debut' => 'date',
         'date_fin' => 'date',

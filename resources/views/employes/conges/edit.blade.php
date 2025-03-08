@@ -29,12 +29,12 @@
             <div class="Aform-section">
                 <div class="Aform-group">
                     <label for="date_debut">Date de début</label>
-                    <input type="date" name="date_debut" id="date_debut" value="{{ $conge->date_debut }}" required>
+                    <input type="date" name="date_debut" id="date_debut" value="{{ $dateFormats['date_debut'] }}" required>
                 </div>
-
+                
                 <div class="Aform-group">
                     <label for="date_fin">Date de fin</label>
-                    <input type="date" name="date_fin" id="date_fin" value="{{ $conge->date_fin }}" required>
+                    <input type="date" name="date_fin" id="date_fin" value="{{ $dateFormats['date_fin'] }}" required>
                 </div>
 
                 <div class="Aform-group">
@@ -42,7 +42,8 @@
                     <select name="type" id="type" required>
                         <option value="">Sélectionnez un type</option>
                         <option value="Congé payé" {{ $conge->type == 'Congé payé' ? 'selected' : '' }}>Congé payé</option>
-                        <option value="Congé sans solde" {{ $conge->type == 'Congé sans solde' ? 'selected' : '' }}>Congé sans solde</option>
+                        <option value="Congé sans solde" {{ $conge->type == 'Congé sans solde' ? 'selected' : '' }}>Congé
+                            sans solde</option>
                         <option value="Maladie" {{ $conge->type == 'Maladie' ? 'selected' : '' }}>Maladie</option>
                         <option value="Formation" {{ $conge->type == 'Formation' ? 'selected' : '' }}>Formation</option>
                         <option value="Autre" {{ $conge->type == 'Autre' ? 'selected' : '' }}>Autre</option>
@@ -51,15 +52,15 @@
 
                 <div class="Aform-group">
                     <label for="motif">Motif</label>
-                    <textarea name="motif" id="motif" placeholder="Précisez le motif de votre absence" rows="4" required>{{ $conge->motif }}</textarea>
+                    <textarea name="motif" id="motif" style="max-height: 50px" placeholder="Précisez le motif de votre absence"
+                        rows="4" required>{{ $conge->motif }}</textarea>
                 </div>
 
                 <div class="Aform-group">
                     <label for="statut">Statut</label>
                     <select name="statut" id="statut" required>
-                        <option value="En attente" {{ $conge->statut == 'En attente' ? 'selected' : '' }}>En attente</option>
-                        <option value="Approuvée" {{ $conge->statut == 'Approuvée' ? 'selected' : '' }}>Approuvée</option>
-                        <option value="Refusée" {{ $conge->statut == 'Refusée' ? 'selected' : '' }}>Refusée</option>
+                        <option value="Planifiée" {{ $conge->statut == 'Planifiée' ? 'selected' : '' }}>Planifiée</option>
+                        <option value="Demandée" {{ $conge->statut == 'Demandée' ? 'selected' : '' }}>Demandée</option>
                     </select>
                 </div>
 

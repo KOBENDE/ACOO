@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ asset('assets/img/favicon.png') }}" rel="icon">
     <title>Connexion | GCA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -86,7 +87,7 @@
         @endif
 
         <!-- Formulaire -->
-        <form action="#" method="POST" class="space-y-6">
+        <form action="{{ route("connection") }}" method="POST" class="space-y-6">
             @csrf
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
@@ -114,7 +115,7 @@ F                    placeholder="••••••••">
                         class="mr-2 rounded border-gray-300 text-[#54acc4] focus:ring-[#54acc4] cursor-pointer">
                     <span class="text-gray-600 group-hover:text-gray-800 transition-colors">Se souvenir de moi</span>
                 </label>
-                <a href="#" class="text-sm text-[#54acc4] hover:text-[#4798b0] transition-colors hover:underline">
+                <a href="{{ route('password.request') }}" class="text-sm text-[#54acc4] hover:text-[#4798b0] transition-colors hover:underline">
                     Mot de passe oublié ?
                 </a>
             </div>
@@ -131,12 +132,6 @@ F                    placeholder="••••••••">
                 <a href="{{ url('/register') }}"
                     class="text-[#54acc4] hover:text-[#4798b0] font-medium hover:underline">
                     Inscrivez-vous
-                </a>
-            </p>
-            <p class="text-center text-sm">
-                <a href="{{ url('/dashboard') }}"
-                    class="text-[#e66840] hover:text-[#d55730] font-medium hover:underline flex items-center justify-center">
-                    <i class="fas fa-external-link-alt mr-2"></i>Continuer sans connexion
                 </a>
             </p>
         </div>

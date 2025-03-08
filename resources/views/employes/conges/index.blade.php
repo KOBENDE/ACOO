@@ -49,8 +49,8 @@
                     <td>{{ $conge->duree }} jour(s)</td>
                     <td>{{ \Illuminate\Support\Str::limit($conge->motif, 50, '...') }}</td>
                     <td>
-                        <span class="badge rounded-pill {{ $conge->statut == 'Approuvée' ? 'bg-success' : 
-                            ($conge->statut == 'Refusée' ? 'bg-danger' : 'bg-warning') }}">
+                        <span class="badge rounded-pill {{ $conge->statut == 'Demandée' ? 'bg-success' : 
+                            ($conge->statut == 'Planifiée' ? 'bg-warning' :  'bg-danger' ) }}">
                             {{ $conge->statut }}
                         </span>
                     </td>

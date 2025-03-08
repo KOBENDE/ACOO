@@ -49,8 +49,8 @@
                     <td>{{ $absence->duree }} jour(s)</td>
                     <td>{{ \Illuminate\Support\Str::limit($absence->motif, 50, '...') }}</td>
                     <td>
-                        <span class="badge rounded-pill {{ $absence->statut == 'Approuvée' ? 'bg-success' : 
-                            ($absence->statut == 'Refusée' ? 'bg-danger' : 'bg-warning') }}">
+                        <span class="badge rounded-pill {{ $absence->statut == 'Demandée' ? 'bg-success' : 
+                            ($absence->statut == 'Planifiée' ? 'bg-warning' : 'bg-danger') }}">
                             {{ $absence->statut }}
                         </span>
                     </td>

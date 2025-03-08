@@ -57,7 +57,12 @@ class VacationRequestController extends Controller
 
     public function edit(VacationRequest $conge): View
     {
-        return view('employes/conges.edit', compact('conge'));
+        $dateFormats = [
+            'date_debut' => $conge->date_debut->format('Y-m-d'),
+            'date_fin' => $conge->date_fin->format('Y-m-d')
+        ];
+        
+        return view('employes/conges.edit', compact('conge', 'dateFormats'));
     }
 
     public function update(Request $request, VacationRequest $conge): RedirectResponse

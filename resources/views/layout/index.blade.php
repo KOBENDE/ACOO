@@ -11,7 +11,6 @@
 
     <!-- Favicons -->
     <link href="{{ asset('assets/img/favicon.png') }}" rel="icon">
-    <link href="{{ asset('assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -41,7 +40,7 @@
     {{-- font awesome icons --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
-    
+
     {{-- For Armand --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -61,8 +60,13 @@
             </a>
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
-
-        <div class="solde">Solde de demande restant: 05</div>
+        @auth
+            @if (Auth::user()->is_admin == 1)
+                <div></div>
+            @else
+                <div class="solde">Solde de demande restant: 05</div>
+            @endif
+        @endauth
 
         <div class="search-bar">
             <form class="search-form d-flex align-items-center" action="#">
@@ -72,6 +76,12 @@
             </form>
         </div>
         <!-- End Search Bar -->
+
+        {{-- bell icon --}}
+        <div class="d-flex align-items-center justify-content-between mx-3"> 
+            <i class="bi bi-bell toggle-sidebar-btn"></i>
+        </div>
+
 
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
@@ -88,15 +98,23 @@
                         data-bs-toggle="dropdown">
                         <img src="{{ asset('assets/img/profil.jpeg') }}" alt="Profile" class="rounded-circle">
                         @auth
-                            <span class="d-none d-md-block dropdown-toggle ps-2">{{ Auth::user()->name }}</span>
+                            <span
+                                class="d-none d-md-block dropdown-toggle ps-2">{{ Auth::user()->nom . ' ' . Auth::user()->prenom }}</span>
                         @endauth
                     </a><!-- End Profile Iamge Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header">
                             @auth
-                                <h6>{{ Auth::user()->name }}</h6>
-                                <span>Admin</span>
+                                @if (Auth::user()->is_admin == 1)
+                                    <span>Admin</span>
+                                    <span
+                                        class="d-none d-md-block  ps-2">{{ Auth::user()->nom . ' ' . Auth::user()->prenom }}</span>
+                                @else
+                                    <span>Employe</span>
+                                    <span
+                                        class="d-none d-md-block  ps-2">{{ Auth::user()->nom . ' ' . Auth::user()->prenom }}</span>
+                                @endif
                             @endauth
                         </li>
                         <li>
@@ -118,7 +136,8 @@
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item d-flex align-items-center confirm-logout" href="#">
+                            <a class="dropdown-item d-flex align-items-center confirm-logout"
+                                href="{{ route('logout') }}">
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Se déconnecter</span>
                             </a>
@@ -162,13 +181,18 @@
                 </ul>
             </li><!-- End Request list -->
 
-            
-            {{-- if is admin display --}}
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="{{ route('employes.index') }}">
-                    <i class="bi bi-list-check"></i><span>Liste des employés</span>
-                </a>
-            </li><!-- End Employe List Page Nav -->
+            @auth
+                @if (Auth::user()->is_admin == 1)
+                    {{-- if is admin display --}}
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="{{ route('employes.index') }}">
+                            <i class="bi bi-list-check"></i><span>Liste des employés</span>
+                        </a>
+                    </li><!-- End Employe List Page Nav -->
+                @else
+                    <div></div>
+                @endif
+            @endauth
 
 
             {{-- ----------------------------------------Settings-------------------------------------- --}}

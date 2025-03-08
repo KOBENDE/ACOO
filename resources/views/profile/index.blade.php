@@ -121,7 +121,7 @@
                     Modifier le profil
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="#">
+                    <form method="POST" action="{{ route('profile.update') }}">
                         @csrf
                         @method('PUT')
 
@@ -129,11 +129,9 @@
                             <label for="name">
                                 <i class="bi bi-person me-2"></i>Nom
                             </label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
-                                name="name"
-                                 {{-- value="{{ old('name', Auth::user()->name) }}" --}}
-                                 >
-                            @error('name')
+                            <input type="text" class="form-control @error('nom') is-invalid @enderror" id="nom"
+                                name="nom" value="{{ old('nom', Auth::user()->nom) }}">
+                            @error('nom')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
@@ -143,9 +141,7 @@
                                 <i class="bi bi-envelope me-2"></i>Email
                             </label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
-                                name="email" 
-                                {{-- value="{{ old('email', Auth::user()->email) }}" --}}
-                                >
+                                name="email" value="{{ old('email', Auth::user()->email) }}">
                             @error('email')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -165,7 +161,7 @@
                     Changer le mot de passe
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="#">
+                    <form method="POST" action="{{ route('profile.update.password') }}">
                         @csrf
                         @method('PUT')
 
@@ -209,7 +205,7 @@
     </div>
     <script>
         // Fonction pour le formulaire de mise à jour du profil
-        document.querySelector('form[action="#"]').addEventListener('submit', function(e) {
+        document.querySelector('form[action="{{ route('profile.update') }}"]').addEventListener('submit', function(e) {
             e.preventDefault();
 
             Swal.fire({
@@ -217,8 +213,8 @@
                 text: "Voulez-vous vraiment mettre à jour votre profil?",
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#2f7707',
-                cancelButtonColor: '#b50505',
+                confirmButtonColor: '#54acc4',
+                cancelButtonColor: '#e66840',
                 confirmButtonText: 'Oui, mettre à jour!',
                 cancelButtonText: 'Annuler'
             }).then((result) => {
@@ -229,24 +225,25 @@
         });
 
         // Fonction pour le formulaire de changement de mot de passe
-        document.querySelector('form[action="#"]').addEventListener('submit', function(e) {
-            e.preventDefault();
+        document.querySelector('form[action="{{ route('profile.update.password') }}"]').addEventListener('submit',
+            function(e) {
+                e.preventDefault();
 
-            Swal.fire({
-                title: 'Êtes-vous sûr?',
-                text: "Voulez-vous vraiment changer votre mot de passe?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#2f7707',
-                cancelButtonColor: '#b50505',
-                confirmButtonText: 'Oui, changer!',
-                cancelButtonText: 'Annuler'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    this.submit();
-                }
+                Swal.fire({
+                    title: 'Êtes-vous sûr?',
+                    text: "Voulez-vous vraiment changer votre mot de passe?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#54acc4',
+                    cancelButtonColor: '#e66840',
+                    confirmButtonText: 'Oui, changer!',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
             });
-        });
 
         // Si un message de succès existe, afficher une alerte sweet
         @if (session('success'))

@@ -57,11 +57,23 @@ class AbsenceRequestController extends Controller
 
     public function edit(AbsenceRequest $absence): View
     {
-        return view('employes/absences.edit', compact('absence'));
+
+        $dateFormats = [
+            'date_debut' => $absence->date_debut->format('Y-m-d'),
+            'date_fin' => $absence->date_fin->format('Y-m-d')
+        ];
+        
+        return view('employes/absences.edit', compact('absence', 'dateFormats'));
     }
 
     public function update(Request $request, AbsenceRequest $absence): RedirectResponse
     {
+        // Vérifier si l'absence est déjà au statut "Demandée"
+        if ($absence->statut == 'Demandée') {
+            return redirect()->route('absences.index')
+                ->with('error', 'Les absences au statut "Demandée" ne peuvent pas être modifiées.');
+        }
+    
         $request->validate([
             'date_debut' => 'required|date',
             'date_fin' => 'required|date|after_or_equal:date_debut',
@@ -69,12 +81,12 @@ class AbsenceRequestController extends Controller
             'type' => 'required|string',
             'statut' => 'required|string'
         ]);
-
+    
         // Recalculer la durée
         $debut = \Carbon\Carbon::parse($request->date_debut);
         $fin = \Carbon\Carbon::parse($request->date_fin);
         $duree = $debut->diffInDays($fin) + 1;
-
+    
         $absence->update([
             'date_debut' => $request->date_debut,
             'date_fin' => $request->date_fin,
@@ -83,7 +95,7 @@ class AbsenceRequestController extends Controller
             'type' => $request->type,
             'statut' => $request->statut
         ]);
-
+    
         return redirect()->route('absences.index')
             ->with('success', 'Demande d\'absence mise à jour avec succès.');
     }
