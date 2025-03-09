@@ -8,6 +8,7 @@
     <title>GCA</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Favicons -->
     <link href="{{ asset('assets/img/favicon.png') }}" rel="icon">
@@ -61,10 +62,10 @@
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
         @auth
-            @if (Auth::user()->is_admin == 1)
+            @if (Auth::user()->is_admin == 1 || Auth::user()->is_admin == 2)
                 <div></div>
             @else
-                <div class="solde">Solde de demande restant: 05</div>
+                <div class="solde">Solde de demande restant: 0{{ auth()->user()->quota_demandes }}</div>
             @endif
         @endauth
 
@@ -78,8 +79,55 @@
         <!-- End Search Bar -->
 
         {{-- bell icon --}}
-        <div class="d-flex align-items-center justify-content-between mx-3"> 
-            <i class="bi bi-bell toggle-sidebar-btn"></i>
+        <div class="d-flex align-items-center justify-content-between mx-3 notification-container">
+            <div class="position-relative">
+                <i class="bi bi-bell toggle-sidebar-btn notification-bell" id="notificationBell"></i>
+                @if (Auth::user() &&
+                        ((Auth::user()->role === 'employe' && Auth::user()->has_response > 0) ||
+                            (Auth::user()->role !== 'employe' && Auth::user()->pending_requests > 0)))
+                    <span
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">
+                        {{ Auth::user()->role === 'employe' ? Auth::user()->has_response : Auth::user()->pending_requests }}
+                        <span class="visually-hidden">notifications non lues</span>
+                    </span>
+                @endif
+            </div>
+
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-header">
+                    <h6>Notifications</h6>
+                    @if (Auth::user() &&
+                            ((Auth::user()->role === 'employe' && Auth::user()->has_response > 0) ||
+                                (Auth::user()->role !== 'employe' && Auth::user()->pending_requests > 0)))
+                        <form method="POST" action="{{ route('notifications.markAsRead') }}" style="display: inline;">
+                            @csrf
+                            <button type="submit" class="mark-all-read"
+                                style="background: none; border: none; padding: 0; color: #54acc4; text-decoration: none; cursor: pointer;">
+                                Tout marquer comme lu
+                            </button>
+                        </form>
+                    @endif
+                </div>
+                <div class="notification-body">
+                    @if (Auth::user() && Auth::user()->role === 'employe' && Auth::user()->has_response > 0)
+                        <div class="notification-item">
+                            <div class="notification-content">
+                                <p>Vous avez reçu une réponse de demande, veuillez consulter votre liste de demandes</p>
+                            </div>
+                        </div>
+                    @elseif(Auth::user() && Auth::user()->role !== 'employe' && Auth::user()->pending_requests > 0)
+                        <div class="notification-item">
+                            <div class="notification-content">
+                                <p>Une nouvelle demande est en attente, veuillez consulter votre liste</p>
+                            </div>
+                        </div>
+                    @else
+                        <div class="notification-item empty">
+                            <p>Aucune notification pour le moment</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
 
 
@@ -108,6 +156,10 @@
                             @auth
                                 @if (Auth::user()->is_admin == 1)
                                     <span>Admin</span>
+                                    <span
+                                        class="d-none d-md-block  ps-2">{{ Auth::user()->nom . ' ' . Auth::user()->prenom }}</span>
+                                @elseif (Auth::user()->is_admin == 2)
+                                    <span>Sudo</span>
                                     <span
                                         class="d-none d-md-block  ps-2">{{ Auth::user()->nom . ' ' . Auth::user()->prenom }}</span>
                                 @else
@@ -163,7 +215,8 @@
             </li><!-- End Dashboard Nav -->
 
             <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#request-nav" data-bs-toggle="collapse" href="#">
+                <a class="nav-link collapsed" data-bs-target="#request-nav" data-bs-toggle="collapse"
+                    href="#">
                     <i class="bi bi-file-text"></i><span>Liste des demandes</span><i
                         class="bi bi-chevron-down ms-auto"></i>
                 </a>
@@ -272,6 +325,54 @@
                     });
                 });
             });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const notificationBell = document.getElementById('notificationBell');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            const markAllRead = document.querySelector('.mark-all-read');
+
+
+            notificationBell.addEventListener('click', function(e) {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('show');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!notificationDropdown.contains(e.target) && e.target !== notificationBell) {
+                    notificationDropdown.classList.remove('show');
+                }
+            });
+
+            if (markAllRead) {
+                markAllRead.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    fetch('/mark-notifications-read', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .content
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+
+                                document.querySelector('.notification-badge')?.remove();
+
+                                const notificationItem = document.querySelector('.notification-item');
+                                if (notificationItem) {
+                                    notificationItem.classList.add('empty');
+                                    notificationItem.innerHTML =
+                                        '<p>Aucune notification pour le moment</p>';
+                                }
+                            }
+                        });
+                });
+            }
         });
     </script>
 

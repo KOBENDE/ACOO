@@ -13,7 +13,7 @@
 
     <div class="absence-card">
         <div class="absence-content">
-            <div class="status-badge {{ $absence->statut == 'Approuvée' ? 'approved' : 
+            <div class="status-badge {{ $absence->statut == 'Acceptée' ? 'approved' : 
                 ($absence->statut == 'Refusée' ? 'rejected' : 'pending') }}">
                 {{ $absence->statut }}
             </div>

@@ -24,29 +24,46 @@
         <!-- Tableau des demandes récentes -->
         <div class="table-container">
             <h2 class="text-lg font-semibold mb-4">Liste des demandes récentes</h2>
-            <table>
-                <thead>
+            <table class="table table-bordered">
+                <tr>
+                    <th>No</th>
+                    <th>Employé</th>
+                    <th>Fonction</th>
+                    <th>Type</th>
+                    <th>Période</th>
+                    <th>Durée</th>
+                    <th>Motif</th>
+                    <th>Statut</th>
+                </tr>
+                @php $counter = 0; @endphp
+                @foreach ($conges->where('statut', 'Demandée')->take(2) as $conge)
                     <tr>
-                        <th>#</th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Fonction</th>
-                        <th>Solde</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Doe</td>
-                        <td>John</td>
-                        <td>Secretaire</td>
-                        <td class="solde-warning">30</td>
+                        <td>{{ ++$counter }}</td>
+                        <td>{{ $conge->employe->nom }} {{ $conge->employe->prenom }}</td>
+                        <td>{{ $conge->employe->fonction }}</td>
+                        <td>{{ $conge->type }}</td>
                         <td>
-                            <button class="btn-view">Voir</button>
+                            Du {{ date('d/m/Y', strtotime($conge->date_debut)) }}
+                            au {{ date('d/m/Y', strtotime($conge->date_fin)) }}
+                            <br>
+                        </td>
+                        <td>{{ $conge->duree }} jour(s)</td>
+                        <td>{{ \Illuminate\Support\Str::limit($conge->motif, 50, '...') }}</td>
+                        <td>
+                            <span
+                                class="badge rounded-pill {{ $conge->statut == 'Acceptée'
+                                    ? 'bg-success'
+                                    : ($conge->statut == 'Rejetée'
+                                        ? 'bg-danger'
+                                        : ($conge->statut == 'Demandée'
+                                            ? 'bg-warning'
+                                            : '')) }}"
+                                style="{{ $conge->statut == 'Planifiée' ? 'background-color: #f0f0f0; color: black;' : '' }}">
+                                {{ $conge->statut }}
+                            </span>
                         </td>
                     </tr>
-                </tbody>
+                @endforeach
             </table>
         </div>
     </div>

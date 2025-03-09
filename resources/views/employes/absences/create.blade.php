@@ -53,7 +53,7 @@
                     <textarea name="motif" id="motif" placeholder="Précisez le motif de votre absence" rows="4" required></textarea>
                 </div>
 
-                <input type="hidden" name="statut" value="En attente">
+                <input type="hidden" name="statut" value="Planifiée">
                 
                 <button type="submit" class="Abtn add-absence">Soumettre la demande</button>
             </div>

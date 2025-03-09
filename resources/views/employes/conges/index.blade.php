@@ -11,11 +11,23 @@
                 </ol>
             </nav>
         </div>
-        <a href="{{ route('conges.create') }}" class="addAcBtn">Nouvelle demande de congé</a>
+        @auth
+            @if (Auth::user()->is_admin == 1 || Auth::user()->is_admin == 2)
+                <div></div>
+            @else
+                <a href="{{ route('conges.create') }}" class="addAcBtn">Nouvelle demande de congé</a>
+            @endif
+        @endauth
     </div>
 
     @if ($message = Session::get('success'))
         <div class="alert alert-success">
+            <p>{{ $message }}</p>
+        </div>
+    @endif
+
+    @if ($message = Session::get('error'))
+        <div class="alert alert-danger">
             <p>{{ $message }}</p>
         </div>
     @endif
@@ -29,16 +41,31 @@
         <table class="table table-bordered">
             <tr>
                 <th>No</th>
+                @if (Auth::user()->is_admin == 1 || Auth::user()->is_admin == 2)
+                    <th>Employé</th>
+                    <th>Fonction</th>
+                    <th>Rôle</th>
+                @endif
                 <th>Type</th>
                 <th>Période</th>
                 <th>Durée</th>
                 <th>Motif</th>
                 <th>Statut</th>
-                <th width="280px">Actions</th>
+                <th width="290px">Actions</th>
             </tr>
+            @php $counter = $i; @endphp
             @foreach ($conges as $conge)
+                {{-- Masquer les demandes "Planifiée" pour les admins --}}
+                @if ((Auth::user()->is_admin == 1 || Auth::user()->is_admin == 2) && $conge->statut == 'Planifiée')
+                    @continue
+                @endif
                 <tr>
-                    <td>{{ ++$i }}</td>
+                    <td>{{ ++$counter }}</td>
+                    @if (Auth::user()->is_admin == 1 || Auth::user()->is_admin == 2)
+                        <td>{{ $conge->employe->nom }} {{ $conge->employe->prenom }}</td>
+                        <td>{{ $conge->employe->fonction }}</td>
+                        <td>{{ $conge->employe->role }}</td>
+                    @endif
                     <td>{{ $conge->type }}</td>
                     <td>
                         Du {{ date('d/m/Y', strtotime($conge->date_debut)) }}
@@ -49,29 +76,90 @@
                     <td>{{ $conge->duree }} jour(s)</td>
                     <td>{{ \Illuminate\Support\Str::limit($conge->motif, 50, '...') }}</td>
                     <td>
-                        <span class="badge rounded-pill {{ $conge->statut == 'Demandée' ? 'bg-success' : 
-                            ($conge->statut == 'Planifiée' ? 'bg-warning' :  'bg-danger' ) }}">
+                        <span
+                            class="badge rounded-pill {{ $conge->statut == 'Acceptée'
+                                ? 'bg-success'
+                                : ($conge->statut == 'Rejetée'
+                                    ? 'bg-danger'
+                                    : ($conge->statut == 'Demandée'
+                                        ? 'bg-warning'
+                                        : '')) }}"
+                            style="{{ $conge->statut == 'Planifiée' ? 'background-color: #f0f0f0; color: black;' : '' }}">
                             {{ $conge->statut }}
                         </span>
                     </td>
                     <td>
-                        <form action="{{ route('conges.destroy', $conge->id) }}" method="POST"
-                            class="actions_crud_form">
+                        <div class="actions_crud_form">
                             <a class="btn btn-info icon" href="{{ route('conges.show', $conge->id) }}"
-                               style="background-color: #54acc4; border-color: #54acc4;">
-                                <ion-icon name="eye-sharp"></ion-icon>voir
+                                style="background-color: #54acc4; border-color: #54acc4;">
+                                <ion-icon name="eye-sharp"></ion-icon>Voir
                             </a>
-                            <a class="btn btn-primary icon" href="{{ route('conges.edit', $conge->id) }}"
-                               style="background-color: #54acc4; border-color: #54acc4;">
-                                <ion-icon name="pencil-sharp"></ion-icon>Editer
-                            </a>
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger icon delete-conge"
-                                    style="background-color: #e66840; border-color: #e66840;">
-                                <ion-icon name="trash-sharp"></ion-icon>Supp.
-                            </button>
-                        </form>
+
+                            @if (Auth::user()->is_admin == 1)
+                                <!-- Admin niveau 1 (probablement chef de service) -->
+                                <form action="{{ route('conges.approuver', $conge->id) }}" method="POST"
+                                    style="display:inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success icon"
+                                        style="background-color: #28a745; border-color: #28a745;">
+                                        <ion-icon name="checkmark-sharp"></ion-icon>Accepter
+                                    </button>
+                                </form>
+
+                                <form action="{{ route('conges.rejeter', $conge->id) }}" method="POST"
+                                    style="display:inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-danger icon"
+                                        style="background-color: #dc3545; border-color: #dc3545;">
+                                        <ion-icon name="close-sharp"></ion-icon>Rejeter
+                                    </button>
+                                </form>
+                            @elseif (Auth::user()->is_admin == 2)
+                                <!-- Admin niveau 2 (probablement directeur ou GRH) -->
+                                <a class="btn btn-primary icon" href="{{ route('conges.edit', $conge->id) }}"
+                                    style="background-color: #54acc4; border-color: #54acc4;">
+                                    <ion-icon name="pencil-sharp"></ion-icon>Editer
+                                </a>
+
+                                <form action="{{ route('conges.approuver', $conge->id) }}" method="POST"
+                                    style="display:inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success icon"
+                                        style="background-color: #28a745; border-color: #28a745;">
+                                        <ion-icon name="checkmark-sharp"></ion-icon>Accepter
+                                    </button>
+                                </form>
+
+                                <form action="{{ route('conges.rejeter', $conge->id) }}" method="POST"
+                                    style="display:inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-danger icon"
+                                        style="background-color: #dc3545; border-color: #dc3545;">
+                                        <ion-icon name="close-sharp"></ion-icon>Rejeter
+                                    </button>
+                                </form>
+                            @else
+                                <!-- Utilisateur normal (employé) -->
+                                @if ($conge->statut == 'Acceptée')
+                                    <div></div>
+                                @elseif ($conge->statut != 'Demandée')
+                                    <a class="btn btn-primary icon" href="{{ route('conges.edit', $conge->id) }}"
+                                        style="background-color: #54acc4; border-color: #54acc4;">
+                                        <ion-icon name="pencil-sharp"></ion-icon>Editer
+                                    </a>
+                                @endif
+
+                                <form action="{{ route('conges.destroy', $conge->id) }}" method="POST"
+                                    style="display:inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger icon delete-conge"
+                                        style="background-color: #e66840; border-color: #e66840;">
+                                        <ion-icon name="trash-sharp"></ion-icon>Supp.
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
                     </td>
                 </tr>
             @endforeach
@@ -121,14 +209,16 @@
             padding: 8px 12px;
             font-size: 0.9em;
         }
-        
+
         .btn.icon {
             margin: 0 5px;
+            padding: 5px 10px;
         }
 
         .actions_crud_form {
             display: flex;
             gap: 5px;
+            flex-wrap: wrap;
         }
     </style>
 @endsection

@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vacation_requests', function (Blueprint $table) {
+        Schema::create('absence_requests', function (Blueprint $table) {
             $table->id();
             $table->date('date_debut');
             $table->date('date_fin');
-            $table->string('motif');
             $table->integer('duree');
+            $table->string('motif');
             $table->string('type');
             $table->string('statut');
+            $table->unsignedBigInteger('employe_id');
+            $table->foreign('employe_id')->references('id')->on('employes')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vacation_requests');
+        Schema::dropIfExists('absence_requests');
     }
 };

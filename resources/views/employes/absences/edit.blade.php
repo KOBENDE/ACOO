@@ -22,7 +22,7 @@
     @endif
 
     <div class="Acontainer">
-        @if($absence->statut == 'Demandée')
+        @if ($absence->statut == 'Demandée')
             <div class="alert alert-warning">
                 <strong>Attention!</strong> Cette absence est au statut "Demandée" et ne peut plus être modifiée.
             </div>
@@ -35,36 +35,44 @@
                 <div class="Aform-section">
                     <div class="Aform-group">
                         <label for="date_debut">Date de début</label>
-                        <input type="date" name="date_debut" id="date_debut" value="{{ $dateFormats['date_debut'] }}" required>
+                        <input type="date" name="date_debut" id="date_debut" value="{{ $dateFormats['date_debut'] }}"
+                            required>
                     </div>
-                    
+
                     <div class="Aform-group">
                         <label for="date_fin">Date de fin</label>
-                        <input type="date" name="date_fin" id="date_fin" value="{{ $dateFormats['date_fin'] }}" required>
+                        <input type="date" name="date_fin" id="date_fin" value="{{ $dateFormats['date_fin'] }}"
+                            required>
                     </div>
 
                     <div class="Aform-group">
                         <label for="type">Type d'absence</label>
                         <select name="type" id="type" required>
                             <option value="">Sélectionnez un type</option>
-                            <option value="Congé payé" {{ $absence->type == 'Congé payé' ? 'selected' : '' }}>Congé payé</option>
-                            <option value="Congé sans solde" {{ $absence->type == 'Congé sans solde' ? 'selected' : '' }}>Congé sans solde</option>
+                            <option value="Congé payé" {{ $absence->type == 'Congé payé' ? 'selected' : '' }}>Congé payé
+                            </option>
+                            <option value="Congé sans solde" {{ $absence->type == 'Congé sans solde' ? 'selected' : '' }}>
+                                Congé sans solde</option>
                             <option value="Maladie" {{ $absence->type == 'Maladie' ? 'selected' : '' }}>Maladie</option>
-                            <option value="Formation" {{ $absence->type == 'Formation' ? 'selected' : '' }}>Formation</option>
+                            <option value="Formation" {{ $absence->type == 'Formation' ? 'selected' : '' }}>Formation
+                            </option>
                             <option value="Autre" {{ $absence->type == 'Autre' ? 'selected' : '' }}>Autre</option>
                         </select>
                     </div>
 
                     <div class="Aform-group">
                         <label for="motif">Motif</label>
-                        <textarea name="motif" id="motif" style="max-height: 50px" placeholder="Précisez le motif de votre absence" rows="4" required>{{ $absence->motif }}</textarea>
+                        <textarea name="motif" id="motif" style="max-height: 50px" placeholder="Précisez le motif de votre absence"
+                            rows="4" required>{{ $absence->motif }}</textarea>
                     </div>
 
                     <div class="Aform-group">
                         <label for="statut">Statut</label>
                         <select name="statut" id="statut" required>
-                            <option value="Planifiée" {{ $absence->statut == 'Planifiée' ? 'selected' : '' }}>Planifiée</option>
-                            <option value="Demandée" {{ $absence->statut == 'Demandée' ? 'selected' : '' }}>Demandée</option>
+                            <option value="Planifiée" {{ $absence->statut == 'Planifiée' ? 'selected' : '' }}>Planifiée
+                            </option>
+                            <option value="Demandée" {{ $absence->statut == 'Demandée' ? 'selected' : '' }}>Demandée
+                            </option>
                         </select>
                     </div>
 
@@ -99,14 +107,14 @@
             border-radius: 4px;
             margin-bottom: 10px;
         }
-        
+
         .alert {
             padding: 15px;
             margin-bottom: 20px;
             border: 1px solid transparent;
             border-radius: 4px;
         }
-        
+
         .alert-warning {
             color: #8a6d3b;
             background-color: #fcf8e3;
@@ -118,7 +126,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const dateDebut = document.getElementById('date_debut');
             const dateFin = document.getElementById('date_fin');
-            
+
             // Vérifier si les éléments existent (au cas où on est dans le mode "Demandée")
             if (dateDebut && dateFin) {
                 // Mettre à jour la date minimale de fin quand la date de début change
@@ -128,11 +136,11 @@
                         dateFin.value = this.value;
                     }
                 });
-                
+
                 // Définir la date minimale initiale
                 dateFin.min = dateDebut.value;
             }
-            
+
             // Récupérer le bouton de modification s'il existe
             const editButton = document.querySelector('.edit-absence');
             if (editButton) {

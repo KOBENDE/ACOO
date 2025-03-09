@@ -26,7 +26,7 @@
                                          <i class="bi bi-calendar-check"></i>
                                     </div>
                                     <div class="ps-3">
-                                        <h6>05</h6>
+                                        <h6>0{{ auth()->user()->quota_demandes }}</h6>
                                     </div>
                                 </div>
                             </div>
@@ -44,7 +44,7 @@
                                          <i class="bi bi-calendar-x"></i> 
                                     </div>
                                     <div class="ps-3">
-                                        <h6>05</h6>
+                                        <h6>0{{ auth()->user()->quota_demandes }}</h6>
                                     </div>
                                 </div>
                             </div>

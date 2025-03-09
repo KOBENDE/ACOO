@@ -13,7 +13,7 @@
 
     <div class="absence-card">
         <div class="absence-content">
-            <div class="status-badge {{ $conge->statut == 'Approuvée' ? 'approved' : 
+            <div class="status-badge {{ $conge->statut == 'Acceptée' ? 'approved' : 
                 ($conge->statut == 'Refusée' ? 'rejected' : 'pending') }}">
                 {{ $conge->statut }}
             </div>
@@ -30,9 +30,6 @@
             </div>
 
             <div class="absence-actions">
-                <a href="{{ route('conges.edit', $conge->id) }}" class="btn btn-primary">
-                    <ion-icon name="pencil-sharp"></ion-icon> Modifier
-                </a>
                 <a href="{{ route('conges.index') }}" class="btn btn-secondary">
                     <ion-icon name="arrow-back-sharp"></ion-icon> Retour
                 </a>

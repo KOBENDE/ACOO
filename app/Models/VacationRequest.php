@@ -16,8 +16,14 @@ class VacationRequest extends Model
         'duree',
         'motif',
         'type',
-        'statut'
+        'statut',
+        'employe_id'
     ];
+
+    public function employe()
+    {
+        return $this->belongsTo(Employe::class);
+    }
     
     protected $dates = ['date_debut', 'date_fin'];
     
