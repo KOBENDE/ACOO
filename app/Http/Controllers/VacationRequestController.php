@@ -142,27 +142,49 @@ class VacationRequestController extends Controller
 
     public function approuver(VacationRequest $conge): RedirectResponse
     {
-        $conge->update([
-            'statut' => 'Acceptée'
-        ]);
+        $currentUser = auth()->user();
+        $employeDemandeService = $conge->employe->service_id;
 
-        $employe = $conge->employe;
-        $employe->increment('has_response');
+        if (($currentUser->is_admin == 1 || $currentUser->is_admin == 2) &&
+            $currentUser->service_id == $employeDemandeService
+        ) {
+
+            $conge->update([
+                'statut' => 'Acceptée'
+            ]);
+
+            $employe = $conge->employe;
+            $employe->increment('has_response');
+
+            return redirect()->route('conges.index')
+                ->with('success', 'Demande de congé acceptée avec succès.');
+        }
 
         return redirect()->route('conges.index')
-            ->with('success', 'Demande de congé acceptée avec succès.');
+            ->with('error', 'Vous n\'êtes pas autorisé à approuver cette demande.');
     }
 
     public function rejeter(VacationRequest $conge): RedirectResponse
     {
-        $conge->update([
-            'statut' => 'Rejetée'
-        ]);
+        $currentUser = auth()->user();
+        $employeDemandeService = $conge->employe->service_id;
 
-        $employe = $conge->employe;
-        $employe->increment('has_response');
+        if (($currentUser->is_admin == 1 || $currentUser->is_admin == 2) &&
+            $currentUser->service_id == $employeDemandeService
+        ) {
+
+            $conge->update([
+                'statut' => 'Rejetée'
+            ]);
+
+            $employe = $conge->employe;
+            $employe->increment('has_response');
+
+            return redirect()->route('conges.index')
+                ->with('success', 'Demande de congé rejetée avec succès.');
+        }
 
         return redirect()->route('conges.index')
-            ->with('success', 'Demande de congé rejetée avec succès.');
+            ->with('error', 'Vous n\'êtes pas autorisé à rejeter cette demande.');
     }
 }

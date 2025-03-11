@@ -133,27 +133,49 @@ class AbsenceRequestController extends Controller
 
     public function approuver(AbsenceRequest $absence): RedirectResponse
     {
-        $absence->update([
-            'statut' => 'Acceptée'
-        ]);
+        $currentUser = auth()->user();
+        $employeDemandeService = $absence->employe->service_id;
 
-        $employe = $absence->employe;
-        $employe->increment('has_response');
+        if (($currentUser->is_admin == 1 || $currentUser->is_admin == 2) &&
+            $currentUser->service_id == $employeDemandeService
+        ) {
+
+            $absence->update([
+                'statut' => 'Acceptée'
+            ]);
+
+            $employe = $absence->employe;
+            $employe->increment('has_response');
+
+            return redirect()->route('absences.index')
+                ->with('success', 'Demande d\'absence acceptée avec succès.');
+        }
 
         return redirect()->route('absences.index')
-            ->with('success', 'Demande d\'absence acceptée avec succès.');
+            ->with('error', 'Vous n\'êtes pas autorisé à approuver cette demande.');
     }
 
     public function rejeter(AbsenceRequest $absence): RedirectResponse
     {
-        $absence->update([
-            'statut' => 'Rejetée'
-        ]);
+        $currentUser = auth()->user();
+        $employeDemandeService = $absence->employe->service_id;
 
-        $employe = $absence->employe;
-        $employe->increment('has_response');
+        if (($currentUser->is_admin == 1 || $currentUser->is_admin == 2) &&
+            $currentUser->service_id == $employeDemandeService
+        ) {
+
+            $absence->update([
+                'statut' => 'Rejetée'
+            ]);
+
+            $employe = $absence->employe;
+            $employe->increment('has_response');
+
+            return redirect()->route('absences.index')
+                ->with('success', 'Demande d\'absence rejetée avec succès.');
+        }
 
         return redirect()->route('absences.index')
-            ->with('success', 'Demande d\'absence rejetée avec succès.');
+            ->with('error', 'Vous n\'êtes pas autorisé à rejeter cette demande.');
     }
 }

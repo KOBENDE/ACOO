@@ -32,7 +32,23 @@
         </div>
     @endif
 
-    @if ($absences->isEmpty())
+    @php
+        $filteredAbsences = $absences->filter(function ($absence) {
+            // Si l'utilisateur est admin ou responsable, on filtre par service
+    if (Auth::user()->is_admin == 1 || Auth::user()->is_admin == 2) {
+        // Exclure les absences "Planifiée"
+        if ($absence->statut == 'Planifiée') {
+                    return false;
+                }
+                // Filtrer par service
+                return Auth::user()->service_id == $absence->employe->service_id;
+            }
+            // Pour les employés réguliers, on affiche toutes leurs absences
+            return true;
+        });
+    @endphp
+
+    @if ($filteredAbsences->isEmpty())
         <div class="empty-list-alert">
             <span class="alert-message">Aucune demande d'absence n'a été enregistrée.</span>
             <span class="close-btn">&times;</span>
@@ -54,11 +70,7 @@
                 <th width="290px">Actions</th>
             </tr>
             @php $counter = $i; @endphp
-            @foreach ($absences as $absence)
-                {{-- Masquer les demandes "Planifiée" pour les admins --}}
-                @if ((Auth::user()->is_admin == 1 || Auth::user()->is_admin == 2) && $absence->statut == 'Planifiée')
-                    @continue
-                @endif
+            @foreach ($filteredAbsences as $absence)
                 <tr>
                     <td>{{ ++$counter }}</td>
                     @if (Auth::user()->is_admin == 1 || Auth::user()->is_admin == 2)
@@ -95,8 +107,7 @@
                                 <ion-icon name="eye-sharp"></ion-icon>Voir
                             </a>
 
-                            @if (Auth::user()->is_admin == 1)
-                                <!-- Admin niveau 1 (probablement chef de service) -->
+                            @if (Auth::user()->is_admin == 1 && Auth::user()->service_id == $absence->employe->service_id)
                                 <form action="{{ route('absences.approuver', $absence->id) }}" method="POST"
                                     style="display:inline">
                                     @csrf
@@ -114,8 +125,7 @@
                                         <ion-icon name="close-sharp"></ion-icon>Rejeter
                                     </button>
                                 </form>
-                            @elseif (Auth::user()->is_admin == 2)
-                                <!-- Admin niveau 2 (probablement directeur ou GRH) -->
+                            @elseif (Auth::user()->is_admin == 2 && Auth::user()->service_id == $absence->employe->service_id)
                                 <a class="btn btn-primary icon" href="{{ route('absences.edit', $absence->id) }}"
                                     style="background-color: #54acc4; border-color: #54acc4;">
                                     <ion-icon name="pencil-sharp"></ion-icon>Editer
@@ -138,8 +148,7 @@
                                         <ion-icon name="close-sharp"></ion-icon>Rejeter
                                     </button>
                                 </form>
-                            @else
-                                <!-- Utilisateur normal (employé) -->
+                            @elseif(Auth::user()->is_admin == 0)
                                 @if ($absence->statut == 'Acceptée')
                                     <div></div>
                                 @elseif ($absence->statut != 'Demandée')

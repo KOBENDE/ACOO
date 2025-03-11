@@ -32,7 +32,23 @@
         </div>
     @endif
 
-    @if ($conges->isEmpty())
+    @php
+        $filteredConges = $conges->filter(function ($conge) {
+            // Si l'utilisateur est admin ou responsable, on filtre par service
+    if (Auth::user()->is_admin == 1 || Auth::user()->is_admin == 2) {
+        // Exclure les congés "Planifiée"
+        if ($conge->statut == 'Planifiée') {
+                    return false;
+                }
+                // Filtrer par service
+                return Auth::user()->service_id == $conge->employe->service_id;
+            }
+            // Pour les employés réguliers, on affiche tous leurs congés
+            return true;
+        });
+    @endphp
+
+    @if ($filteredConges->isEmpty())
         <div class="empty-list-alert">
             <span class="alert-message">Aucune demande de congé n'a été enregistrée.</span>
             <span class="close-btn">&times;</span>
@@ -54,11 +70,7 @@
                 <th width="290px">Actions</th>
             </tr>
             @php $counter = $i; @endphp
-            @foreach ($conges as $conge)
-                {{-- Masquer les demandes "Planifiée" pour les admins --}}
-                @if ((Auth::user()->is_admin == 1 || Auth::user()->is_admin == 2) && $conge->statut == 'Planifiée')
-                    @continue
-                @endif
+            @foreach ($filteredConges as $conge)
                 <tr>
                     <td>{{ ++$counter }}</td>
                     @if (Auth::user()->is_admin == 1 || Auth::user()->is_admin == 2)
@@ -95,8 +107,7 @@
                                 <ion-icon name="eye-sharp"></ion-icon>Voir
                             </a>
 
-                            @if (Auth::user()->is_admin == 1)
-                                <!-- Admin niveau 1 (probablement chef de service) -->
+                            @if (Auth::user()->is_admin == 1 && Auth::user()->service_id == $conge->employe->service_id)
                                 <form action="{{ route('conges.approuver', $conge->id) }}" method="POST"
                                     style="display:inline">
                                     @csrf
@@ -114,8 +125,7 @@
                                         <ion-icon name="close-sharp"></ion-icon>Rejeter
                                     </button>
                                 </form>
-                            @elseif (Auth::user()->is_admin == 2)
-                                <!-- Admin niveau 2 (probablement directeur ou GRH) -->
+                            @elseif (Auth::user()->is_admin == 2 && Auth::user()->service_id == $conge->employe->service_id)
                                 <a class="btn btn-primary icon" href="{{ route('conges.edit', $conge->id) }}"
                                     style="background-color: #54acc4; border-color: #54acc4;">
                                     <ion-icon name="pencil-sharp"></ion-icon>Editer
@@ -138,8 +148,7 @@
                                         <ion-icon name="close-sharp"></ion-icon>Rejeter
                                     </button>
                                 </form>
-                            @else
-                                <!-- Utilisateur normal (employé) -->
+                            @elseif(Auth::user()->is_admin == 0)
                                 @if ($conge->statut == 'Acceptée')
                                     <div></div>
                                 @elseif ($conge->statut != 'Demandée')
@@ -177,7 +186,7 @@
                     const form = this.closest('form');
 
                     Swal.fire({
-                        title: 'Voulez-vous réellement supprimer ce conge ?',
+                        title: 'Voulez-vous réellement supprimer ce congé ?',
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#54acc4',
@@ -189,7 +198,7 @@
                             form.submit();
                             Swal.fire({
                                 icon: "success",
-                                title: "demande de congé supprimé avec succès",
+                                title: "Demande de congé supprimée avec succès",
                                 showConfirmButton: false,
                                 timer: 1500
                             });

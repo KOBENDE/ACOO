@@ -25,12 +25,12 @@ Route::put('/profile/update', [AuthController::class, 'updateProfile'])->name('p
 Route::put('/profile/update-password', [AuthController::class, 'updatePassword'])->name('profile.update.password');
 // Demandes d'absences
 Route::resource('absences', AbsenceRequestController::class);
-Route::post('/absences/{absence}/approuver', [App\Http\Controllers\VacationRequestController::class, 'approuver'])->name('absences.approuver');
-Route::post('/absences/{absence}/rejeter', [App\Http\Controllers\VacationRequestController::class, 'rejeter'])->name('absences.rejeter');
+Route::post('/absences/{absence}/approuver', [VacationRequestController::class, 'approuver'])->name('absences.approuver');
+Route::post('/absences/{absence}/rejeter', [VacationRequestController::class, 'rejeter'])->name('absences.rejeter');
 // Demandes de congés
 Route::resource('conges', VacationRequestController::class);
-Route::post('/conges/{conge}/approuver', [App\Http\Controllers\VacationRequestController::class, 'approuver'])->name('conges.approuver');
-Route::post('/conges/{conge}/rejeter', [App\Http\Controllers\VacationRequestController::class, 'rejeter'])->name('conges.rejeter');
+Route::post('/conges/{conge}/approuver', [VacationRequestController::class, 'approuver'])->name('conges.approuver');
+Route::post('/conges/{conge}/rejeter', [VacationRequestController::class, 'rejeter'])->name('conges.rejeter');
 // Employes
 Route::resource('employes', EmployeController::class);
 Route::resource('vacationrequest', VacationRequestController::class);

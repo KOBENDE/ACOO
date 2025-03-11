@@ -40,8 +40,6 @@
                     <label for="type">Type d'absence</label>
                     <select name="type" id="type" required>
                         <option value="">Sélectionnez un type</option>
-                        <option value="Congé payé">Congé payé</option>
-                        <option value="Congé sans solde">Congé sans solde</option>
                         <option value="Maladie">Maladie</option>
                         <option value="Formation">Formation</option>
                         <option value="Autre">Autre</option>
